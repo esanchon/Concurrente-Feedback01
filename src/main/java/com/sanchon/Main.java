@@ -9,11 +9,13 @@ public class Main {
     static JProgressBar progressBar;
     static JButton startButton;
     static JButton cancelButton;
+    static JTextField secondsField;
     static CountdownThread countdownThread;
+    static MonitorThread monitorThread;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Apollo 11 Launch");
-        frame.setSize(300, 200);
+        frame.setSize(300, 250);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
@@ -21,16 +23,20 @@ public class Main {
         countdownLabel.setBounds(50, 30, 200, 30);
         frame.add(countdownLabel);
 
+        secondsField = new JTextField();
+        secondsField.setBounds(50, 60, 200, 30);
+        frame.add(secondsField);
+
         progressBar = new JProgressBar();
-        progressBar.setBounds(50, 70, 200, 30);
+        progressBar.setBounds(50, 100, 200, 30);
         frame.add(progressBar);
 
         startButton = new JButton("Start");
-        startButton.setBounds(50, 110, 80, 30);
+        startButton.setBounds(50, 140, 80, 30);
         frame.add(startButton);
 
         cancelButton = new JButton("Cancel");
-        cancelButton.setBounds(140, 110, 80, 30);
+        cancelButton.setBounds(140, 140, 80, 30);
         frame.add(cancelButton);
 
         frame.setVisible(true);
@@ -38,9 +44,12 @@ public class Main {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int seconds = Integer.parseInt(JOptionPane.showInputDialog("Enter countdown seconds:"));
+                int seconds = Integer.parseInt(secondsField.getText());
                 countdownThread = new CountdownThread(seconds);
                 countdownThread.start();
+                monitorThread = new MonitorThread(countdownThread, "log.txt");
+                monitorThread.start();
+
             }
         });
 
@@ -50,34 +59,8 @@ public class Main {
                 if (countdownThread != null) {
                     countdownThread.interrupt();
                 }
+
             }
         });
-    }
-}
-
-class CountdownThread extends Thread {
-    private int seconds;
-
-    public CountdownThread(int seconds) {
-        this.seconds = seconds;
-    }
-
-    @Override
-    public void run() {
-        for (int i = seconds; i >= 0; i--) {
-            if (Thread.interrupted()) {
-                JOptionPane.showMessageDialog(null, "Launch cancelled!");
-                return;
-            }
-            Main.countdownLabel.setText("Countdown: " + i);
-            Main.progressBar.setValue((int) ((double) i / seconds * 100));
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                JOptionPane.showMessageDialog(null, "Launch cancelled!");
-                return;
-            }
-        }
-        JOptionPane.showMessageDialog(null, "Launch successful!");
     }
 }
