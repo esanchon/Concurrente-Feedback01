@@ -1,0 +1,9 @@
+2023-12-11 22:20:09 - CountdownThread is ACTIVE - Seconds Left: 3
+2023-12-11 22:20:09 - CountdownThread is ACTIVE - Seconds Left: 3
+2023-12-11 22:20:10 - CountdownThread is ACTIVE - Seconds Left: 2
+2023-12-11 22:20:10 - CountdownThread is ACTIVE - Seconds Left: 2
+2023-12-11 22:20:11 - CountdownThread is ACTIVE - Seconds Left: 1
+2023-12-11 22:20:11 - CountdownThread is ACTIVE - Seconds Left: 1
+2023-12-11 22:20:12 - CountdownThread is ACTIVE - Seconds Left: 0
+2023-12-11 22:20:12 - CountdownThread is ACTIVE - Seconds Left: 0
+2023-12-11 22:20:13 - CountdownThread is COMPLETED - Seconds Left: 0

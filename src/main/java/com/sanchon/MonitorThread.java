@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 class MonitorThread extends Thread {
     private PrintWriter logWriter;
-    private CountdownThread countdownThread;
+    private final CountdownThread countdownThread;
     private static final Logger LOGGER = Logger.getLogger(MonitorThread.class.getName());
 
     public MonitorThread(CountdownThread countdownThread, String logFileName) {
@@ -25,12 +25,12 @@ class MonitorThread extends Thread {
 
     @Override
     public void run() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         while (countdownThread.getStatus().equals("active")) {
             logStatus("ACTIVE");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
+                LOGGER.log(Level.SEVERE, "Error sleeping", ex);
                 logStatus("INTERRUPTED");
             }
         }
