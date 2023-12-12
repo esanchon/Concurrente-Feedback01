@@ -18,13 +18,18 @@ public class CountdownThread extends Thread {
                 this.status = "cancelled";
                 return;
             }
-            Main.countdownLabel.setText("Countdown: " + i);
+            Main.countdownLabel.setText(this.getName() + "  Segundos restantes: " + i);
             Main.progressBar.setValue((int) ((double) i / seconds * 100));
             secondsLeft = i;
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 this.status = "cancelled";
+                try {
+                    Thread.currentThread().join();
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
                 return;
             }
         }
@@ -35,15 +40,9 @@ public class CountdownThread extends Thread {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public int getSecondsLeft() {
         return secondsLeft;
     }
 
-    public void setSecondsLeft(int secondsLeft) {
-        this.secondsLeft = secondsLeft;
-    }
 }

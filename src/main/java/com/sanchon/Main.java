@@ -1,8 +1,6 @@
 package com.sanchon;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Main {
     static JLabel countdownLabel;
@@ -10,16 +8,16 @@ public class Main {
     static JButton startButton;
     static JButton cancelButton;
     static JTextField secondsField;
-    static CountdownThread countdownThread;
+    static CountdownThread[] countdownThreads = new CountdownThread[4];
     static MonitorThread monitorThread;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Apollo 11 Launch");
+        JFrame frame = new JFrame("Apolo XI");
         frame.setSize(300, 250);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        countdownLabel = new JLabel("Enter seconds:");
+        countdownLabel = new JLabel("Indique segundos (por fase):");
         countdownLabel.setBounds(50, 30, 200, 30);
         frame.add(countdownLabel);
 
@@ -31,36 +29,46 @@ public class Main {
         progressBar.setBounds(50, 100, 200, 30);
         frame.add(progressBar);
 
-        startButton = new JButton("Start");
+        startButton = new JButton("Iniciar");
         startButton.setBounds(50, 140, 80, 30);
         frame.add(startButton);
 
-        cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Parar");
         cancelButton.setBounds(140, 140, 80, 30);
         frame.add(cancelButton);
 
         frame.setVisible(true);
 
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int seconds = Integer.parseInt(secondsField.getText());
-                countdownThread = new CountdownThread(seconds);
-                countdownThread.start();
-                monitorThread = new MonitorThread(countdownThread, "log.txt");
-                monitorThread.start();
+        startButton.addActionListener(e -> startThreads());
+        cancelButton.addActionListener(e -> stopThreads());
+    }
 
+    private static void startThreads() {
+        new Thread(() -> {
+            int seconds = Integer.parseInt(secondsField.getText());
+            for (int i = 0; i < 4; i++) {
+                countdownThreads[i] = new CountdownThread(seconds);
             }
-        });
-
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (countdownThread != null) {
-                    countdownThread.interrupt();
+            monitorThread = new MonitorThread(countdownThreads[0], "log.txt");
+            monitorThread.start();
+            for (int i = 0; i < 4; i++) {
+                countdownThreads[i].setName("Fase:" + (i + 1));
+                countdownThreads[i].start();
+                monitorThread.setCountdownThread(countdownThreads[i]);
+                try {
+                    countdownThreads[i].join();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
-
             }
-        });
+        }).start();
+    }
+
+    private static void stopThreads() {
+        for (CountdownThread countdownThread : countdownThreads) {
+            if (countdownThread != null) {
+                countdownThread.interrupt();
+            }
+        }
     }
 }

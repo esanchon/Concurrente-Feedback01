@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 class MonitorThread extends Thread {
     private PrintWriter logWriter;
-    private final CountdownThread countdownThread;
+    private CountdownThread countdownThread;
     private static final Logger LOGGER = Logger.getLogger(MonitorThread.class.getName());
 
     public MonitorThread(CountdownThread countdownThread, String logFileName) {
@@ -40,7 +40,7 @@ class MonitorThread extends Thread {
 
     private void logStatus(String status) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String message = timestamp + " - CountdownThread is " + status + " - Seconds Left: " + countdownThread.getSecondsLeft();
+        String message = timestamp + " - " + countdownThread.getName() + " - Estado:" + status + " - Segundos restantes: " + countdownThread.getSecondsLeft();
         logWriter.println(message);
         System.out.println(message);
         if (status.equals("CANCELLED")) {
@@ -48,5 +48,9 @@ class MonitorThread extends Thread {
         } else if (status.equals("COMPLETED")) {
             JOptionPane.showMessageDialog(null, "Apolo13 launched!");
         }
+    }
+
+    public void setCountdownThread(CountdownThread countdownThread) {
+        this.countdownThread = countdownThread;
     }
 }
