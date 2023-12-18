@@ -54,9 +54,9 @@ class MonitorThread extends Thread {
         logWriter.println(message);
         System.out.println(message);
         if (status.equals("CANCELLED")) {
-            JOptionPane.showMessageDialog(null, "Launch cancelled!");
+            JOptionPane.showMessageDialog(null, "Lanzamiento cancelado! :/");
         } else if (status.equals("COMPLETED")) {
-               JOptionPane.showMessageDialog(null, "Launch completed!");
+               JOptionPane.showMessageDialog(null, "Lanzamiento completado!");
                 new JFXPanel();
                 Platform.runLater(() -> {
                     Pane root = new Pane();
